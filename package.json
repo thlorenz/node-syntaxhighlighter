@@ -1,0 +1,24 @@
+{
+  "name": "node-syntaxhighlighter",
+  "author": "Thorsten Lorenz",
+  "version-comment": "matches last synced SyntaxHighlighter version",
+  "version": "3.0.83",
+  "description": "Port of Alex Gorbachev's great SyntaxHighlighter to be used with nodejs.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/thlorenz/node-syntaxhighlighter.git"
+  },
+  "keywords": [
+    "syntax",
+    "highlight",
+    "code"
+  ],
+  "licenses" : [
+		{ "type": "MIT" }, 
+		{ "type": "LGPL" }
+	],
+}
