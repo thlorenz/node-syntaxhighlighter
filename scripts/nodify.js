@@ -1,15 +1,21 @@
 var child_process =  require('child_process')
   , exec          =  child_process.exec
   , spawn         =  child_process.spawn
+  , fs            =  require('fs')
+  , path          =  require('path')
   , log           =  require('npmlog')
   , util          =  require('util')
   ;
+
+log.level = log.levels.silly;
 
 function execute (command, args, callback) {
   var errors  =  []
     , infos   =  []
     , spawned =  spawn (command, args)
     ;
+
+  log.silly(command, args);
 
   spawned.stdout.on('data', function(data) {
     var msg = util.format('%s', data.toString());
@@ -33,30 +39,108 @@ function gitClone(url, targetFolder, callback) {
   execute ('git', [ 'clone', url, targetFolder ], callback);
 } 
 
+function rmdir(dir, cb) {
+  if (!fs.existsSync(dir)) 
+    cb(null); 
+  else
+    execute('rm', ['-rf', dir], cb);
+}
+
+function copyDirRec(src, tgt, cb) {
+  execute ('cp', ['-R', src, tgt], cb);
+}
 
 log.info('nodify', 'It succeeded if it ends wit OK.');
 
-// First we need to get the repo
+var lib = path.join(__dirname, '../lib')
+  , repo = path.join(__dirname, '../repo')
+  , url = 'git://github.com/alexgorbatchev/SyntaxHighlighter.git'
+  ;
+  
+function cleanAndGetRepo (cb) {
+  // Clean old stuff
+  rmdir(lib, function (err) {
+    if (err) log.error('removing', lib, error);
+    else rmdir(repo, function (err) {
+      if (err) log.error('removing', repo, error);
+      else { 
+        log.info('nodify', 'Removed old lib and repo folders.');
+        cloneRepo();
+      }
+    });
+    
+  });
 
-// Clean old copy
+  function cloneRepo () {
+    // Clone new version
+    gitClone(url, repo, function (err, res) {
+      if (err) log.error('nodify', err); else cb();
+    });
+  }
+}
 
+function nodify () {
 
-// Clone new version
+  fs.mkdirSync(lib);
 
+  var go = copyCssFiles;
 
-// Generate css files and place inside styles folder
+  function copyCssFiles() { 
+    var cssSrc = path.join(repo, 'styles')
+      , cssTgt = path.join(lib, 'styles')
+      ;
 
-// Pull scripts into lib folder
+    copyDirRec(cssSrc, cssTgt, function (err) {
+      if (err) log.error('nodify', err); else copyAndAdaptScripts();
+    });
+  }
+    
+  function copyAndAdaptScripts() {
+    var scriptsSrc = path.join(repo, 'scripts')
+      , scriptsTgt = path.join(lib, 'scripts')
+      ;
 
+    fs.mkdirSync(scriptsTgt);
 
-// Fix require statements in scripts
+    // Pull scripts into lib folder while fixing require statements
+    fs.readdirSync(scriptsSrc).forEach(function (script) {
 
+      var content = fs.readFileSync(path.join(scriptsSrc, script)).toString();
 
-// XRegXp needs to export its constructor
+      log.verbose('nodify', 'processing %j', { script: script, length: content.length });
 
+      // properly export XRegExp
+      if (script === 'XRegExp.js') {
+        content += '\nmodule.exports.XRegExp = XRegExp;';
+      }
 
-// Fix shCore require statement
+      // fix shCore XRegExp require
+      else if (script === 'shCore.js') {
+        content = 
+          'var XRegExp = require("./XRegExp").XRegExp;\n' +
+          content
+            .replace(
+              /if +\(typeof\(SyntaxHighlighter\) +== +'undefined'\) +var +SyntaxHighlighter += +function\(\) +\{/,
+              'var SyntaxHighlighter = function() {'
+            )
+            .replace(/.+require *\( *['"]XRegExp['"] *\).+/g, '// No op since required properly at top of file\n')
+            ;
+      }
 
+      // fix Brushes SyntaxHighlighter requires
+      else {
+        content = 
+          'var SyntaxHighlighter;\n' +
+          content.replace(/require *\( *['"]shCore['"] *\)/g, 'require("./shCore")');
+      }
+      
+      fs.writeFileSync(path.join(scriptsTgt, script), content);
+    });
 
-log.info('nodify', 'Everything is OK');
+    log.info('nodify', 'Everything is OK');
+  }
 
+  go();
+}
+
+cleanAndGetRepo(nodify);
