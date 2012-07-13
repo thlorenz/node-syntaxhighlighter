@@ -1,9 +1,9 @@
-var fs = require('fs')
-  , path = require('path')
-  , scriptsDir = path.join(__dirname, './lib/scripts')
-  , brushMap = { }
-  , similarMap = { }
-  , similarLangs = {
+var fs           =  require('fs')
+  , path         =  require('path')
+  , scriptsDir   =  path.join(__dirname, './lib/scripts')
+  , langMap      =  { }
+  , similarMap   =  { }
+  , similarLangs =  {
         'js'     :  [ 'json' ]
       , 'python' :  ['coffee', 'groovy', 'hs', 'haskell' ]
     }
@@ -13,35 +13,35 @@ var fs = require('fs')
   fs.readdirSync(scriptsDir).forEach(function (file) {
     if (!file.match(/shBrush\w+\.js/)) return;
     
-    var brush = require(path.join(scriptsDir, file)).Brush;
-    brush.aliases.forEach(function (alias) {
-      brushMap[alias.toLowerCase()] = brush;
+    var language = require(path.join(scriptsDir, file));
+    language.Brush.aliases.forEach(function (alias) {
+      langMap[alias.toLowerCase()] = language;
     });
   });  
 
   // Add some known aliases
-  brushMap['cs'] = brushMap['c#'];
+  langMap['cs'] = langMap['c#'];
 
   // Add similar brushes to similar map
   Object.keys(similarLangs).forEach(function (lang) {
     similarLangs[lang].forEach(function (similar) {
-      similarMap[similar] = brushMap[lang];
+      similarMap[similar] = langMap[lang];
     });
   });
 }) ();
 
-function getBrush(alias, strict) {
-  return brushMap[alias] || (!strict ? similarMap[alias] : undefined);
+function getLanguage(alias, strict) {
+  return langMap[alias] || (!strict ? similarMap[alias] : undefined);
 }
 
-function highlight(code, brush) {
+function highlight(code, language, options) {
 
+  var brush = new language.Brush();
   brush.init({ toolbar: false });
 
   return brush.getHtml(code);
 }
-
 module.exports = {
-    highlight :  highlight
-  , getBrush  :  getBrush
+    highlight   :  highlight
+  , getLanguage :  getLanguage
 };
