@@ -34,10 +34,24 @@ function getLanguage(alias, strict) {
   return langMap[alias] || (!strict ? similarMap[alias] : undefined);
 }
 
+// options: http://alexgorbatchev.com/SyntaxHighlighter/manual/configuration/
 function highlight(code, language, options) {
+  var mergedOpts = { }
+    , defaults = {
+      toolbar: false
+    };
+
+  if (options) {
+    Object.keys(defaults).forEach(function (key) {
+      mergedOpts[key] = options[key] || defaults[key];
+    });
+  } else {
+    mergedOpts = defaults;
+  }
 
   var brush = new language.Brush();
-  brush.init({ toolbar: false });
+
+  brush.init(mergedOpts);
 
   return brush.getHtml(code);
 }
