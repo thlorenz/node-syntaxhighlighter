@@ -2,7 +2,7 @@
   "name": "node-syntaxhighlighter",
   "author": "Thorsten Lorenz <thlorenz@gmx.de> (thorstenlorenz.wordpress.com)",
   "version-comment": "major.minor.revision where revision matches last synced SyntaxHighlighter version",
-  "version": "0.0.83",
+  "version": "0.1.83",
   "description": "Port of Alex Gorbachev's great SyntaxHighlighter to be used with nodejs.",
   "main": "index.js",
   "scripts": {

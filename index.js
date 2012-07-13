@@ -1,8 +1,40 @@
+var fs = require('fs')
+  , path = require('path')
+  , scriptsDir = path.join(__dirname, './lib/scripts')
+  , brushMap = { }
+  , similarMap = { }
+  , similarLangs = {
+        'js'     :  [ 'json' ]
+      , 'python' :  ['coffee', 'groovy', 'hs', 'haskell' ]
+    }
+  ;
 
-function highlight(code, language) {
+(function mapBrushes() {
+  fs.readdirSync(scriptsDir).forEach(function (file) {
+    if (!file.match(/shBrush\w+\.js/)) return;
+    
+    var brush = require(path.join(scriptsDir, file)).Brush;
+    brush.aliases.forEach(function (alias) {
+      brushMap[alias.toLowerCase()] = brush;
+    });
+  });  
 
-  var langScript = require('./lib/scripts/shBrush' + language)
-    , brush = new langScript.Brush();
+  // Add some known aliases
+  brushMap['cs'] = brushMap['c#'];
+
+  // Add similar brushes to similar map
+  Object.keys(similarLangs).forEach(function (lang) {
+    similarLangs[lang].forEach(function (similar) {
+      similarMap[similar] = brushMap[lang];
+    });
+  });
+}) ();
+
+function getBrush(alias, strict) {
+  return brushMap[alias] || (!strict ? similarMap[alias] : undefined);
+}
+
+function highlight(code, brush) {
 
   brush.init({ toolbar: false });
 
@@ -10,5 +42,6 @@ function highlight(code, language) {
 }
 
 module.exports = {
-    highlight: highlight
+    highlight :  highlight
+  , getBrush  :  getBrush
 };
