@@ -13,7 +13,7 @@ node-syntaxhighlighter tries to fix that and expose a node friendly api.
 # Example
 
 ```javascript
-var nsh      =  require('../node-syntaxhighlighter')
+var nsh      =  require('node-syntaxhighlighter')
   , language =  nsh.getLanguage('js')
   , code     =  'var nshRocks = true;'
   ;
