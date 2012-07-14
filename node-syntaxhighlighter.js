@@ -45,9 +45,15 @@ function highlight(code, language, options) {
     };
 
   if (options) {
+    // Gather all user specified options first
+    Object.keys(options).forEach(function (key) {
+      mergedOpts[key] = options[key];
+    });
+    // Add default option only if user didn't specify its value
     Object.keys(defaults).forEach(function (key) {
       mergedOpts[key] = options[key] || defaults[key];
     });
+
   } else {
     mergedOpts = defaults;
   }
@@ -58,6 +64,7 @@ function highlight(code, language, options) {
 
   return brush.getHtml(code);
 }
+
 module.exports = {
     highlight   :  highlight
   , getLanguage :  getLanguage

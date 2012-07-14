@@ -1,18 +1,11 @@
 /*jshint asi:true */
 
 var should = require('should')
-  , proxyquire = require('proxyquire').setup()
   , dirname = __dirname
-  , nsh
+  , nsh = require('../node-syntaxhighlighter')
   ;
 
-
 describe('language resolution', function () {
-  before(function () {
-    nsh = proxyquire
-      .reset()
-      .require('../node-syntaxhighlighter');
-  })
 
   describe('resolving unknown language', function () {
     it('returns undefined for "unknown lang"', function () {
@@ -46,5 +39,73 @@ describe('language resolution', function () {
       should.exist(nsh.getLanguage('*.js'))
     })  
   })
+
 })
 
+describe('highlight', function () {
+
+  var code = 'some code'
+    , highlightedCode = '<somecode>'
+    , returnedCode
+    , language
+    , usedOpts
+    ;
+
+  before(function () {
+    function Brush() { }
+
+    Brush.prototype.init = function (opts) {
+      usedOpts = opts;
+    }
+
+    Brush.prototype.getHtml = function (c) {
+      if (c === code) return highlightedCode; else return undefined;
+    }
+
+    language = { Brush: Brush };
+  })
+
+  beforeEach(function () {
+    usedOpts = undefined;
+  })
+
+  describe('when I call highlight with a language, but no options', function () {
+    beforeEach(function () {
+      returnedCode = nsh.highlight(code, language);
+    });
+
+    it('initializes brush with no toolbar option', function () {
+      usedOpts.toolbar.should.be.false;
+    })     
+    it('initializes brush without gutter option', function () {
+      should.not.exist(usedOpts.gutter)
+    })     
+    it('initializes brush without tabsize option', function () {
+      should.not.exist(usedOpts['tab-size'])
+    })     
+
+    it('returns highlighted code', function () {
+      returnedCode.should.eql(highlightedCode);
+    })
+  })
+  
+  describe('when I call highlight with a language, and options { toolbar: true, tab-size: 2 } ', function () {
+    beforeEach(function () {
+      returnedCode = nsh.highlight(code, language, { toolbar: true, 'tab-size': 2 });
+    });
+
+    it('initializes brush with toolbar option', function () {
+      usedOpts.toolbar.should.be.true;
+    })     
+    it('initializes brush without gutter option', function () {
+      should.not.exist(usedOpts.gutter)
+    })     
+    it('initializes brush with tab-size 2 option', function () {
+      usedOpts['tab-size'].should.eql(2);
+    })     
+
+    it('returns highlighted code', function () {
+      returnedCode.should.eql(highlightedCode);
+    })
+  })
+})
