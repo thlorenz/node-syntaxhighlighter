@@ -31,7 +31,10 @@ var fs           =  require('fs')
 }) ();
 
 function getLanguage(alias, strict) {
-  return langMap[alias] || (!strict ? similarMap[alias] : undefined);
+  // accept *.ext, .ext and ext
+  var normalizedAlias = alias.replace(/^\*/,'').replace(/^\./,'');
+
+  return langMap[normalizedAlias] || (!strict ? similarMap[normalizedAlias] : undefined);
 }
 
 // options: http://alexgorbatchev.com/SyntaxHighlighter/manual/configuration/
