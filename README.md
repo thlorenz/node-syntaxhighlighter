@@ -1,4 +1,4 @@
-# node-syntaxhighlighter
+# node-syntaxhighlighter [![Build Status](https://secure.travis-ci.org/thlorenz/node-syntaxhighlighter.png)](http://travis-ci.org/thlorenz/node-syntaxhighlighter)
 
 Node friendly version of [Alex Gorbachev's great SyntaxHighlighter](http://alexgorbatchev.com/SyntaxHighlighter/).
 
