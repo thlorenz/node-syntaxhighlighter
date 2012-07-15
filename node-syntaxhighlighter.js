@@ -1,6 +1,8 @@
 var fs           =  require('fs')
   , path         =  require('path')
   , scriptsDir   =  path.join(__dirname, './lib/scripts')
+  , stylesDir    =  path.join(__dirname, './lib/styles')
+  , styles
   , langMap      =  { }
   , similarMap   =  { }
   , similarLangs =  {
@@ -9,6 +11,10 @@ var fs           =  require('fs')
     }
   ;
 
+
+// Self invoking functions block until they are finished in order to ensure that 
+// this module is properly initialized before it is returned.
+// Since this only happens once (when module is required), it shouldn't be a problem.
 (function mapBrushes() {
   fs.readdirSync(scriptsDir).forEach(function (file) {
     if (!file.match(/shBrush\w+\.js/)) return;
@@ -30,11 +36,29 @@ var fs           =  require('fs')
   });
 }) ();
 
+(function collectStyles () {
+  styles = fs.readdirSync(stylesDir)
+    .filter(function (fileName) {
+      return fileName.match(/shCore.+\.css/);
+    })
+    .map(function (fileName) {
+      var normalizedFileName =  fileName.replace(/shCore/, '')
+        , extLength          =  path.extname(normalizedFileName).length
+        , nameLength         =  normalizedFileName.length - extLength
+        , styleName          =  normalizedFileName.substr(0, nameLength).toLowerCase()
+        , fullFilePath       =  path.join(stylesDir, fileName)
+        ;
+
+      return { name: styleName, sourcePath: fullFilePath };
+      
+    });
+}) ();
+
 function getLanguage(alias, strict) {
   // accept *.ext, .ext and ext
   var normalizedAlias = alias.replace(/^\*/,'').replace(/^\./,'');
 
-  return langMap[normalizedAlias] || (!strict ? similarMap[normalizedAlias] : undefined);
+  return langMap[normalizedAlias] || (!strict ? similarMap[normalizedAlias] : void 0);
 }
 
 // options: http://alexgorbatchev.com/SyntaxHighlighter/manual/configuration/
@@ -65,7 +89,14 @@ function highlight(code, language, options) {
   return brush.getHtml(code);
 }
 
+function getStyles () {
+  return styles;
+}
+
+console.log(getStyles());
 module.exports = {
-    highlight   :  highlight
-  , getLanguage :  getLanguage
+    highlight      :  highlight
+  , getLanguage    :  getLanguage
+  , getStyles      :  getStyles
 };
+

@@ -109,3 +109,26 @@ describe('highlight', function () {
     })
   })
 })
+
+describe('getStyles', function () {
+  var styles;
+
+  before(function () {
+    styles = nsh.getStyles();
+  })
+
+  it('gets a list of all available styles', function () {
+    styles.should.not.be.empty;
+  })  
+
+  it('contains style named default', function () {
+    styles.filter(function (style) {
+      return style.name === 'default'
+    }).should.not.be.empty;
+  })
+  it('all styles have absolute sourcePath', function () {
+    styles.filter(function (style) {
+      return ! style.sourcePath.match(/(\/.+)+\w+\.css/);
+    }).should.be.empty;
+  })
+})
