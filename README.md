@@ -76,7 +76,7 @@ Returns all available styles in the following format:
 
 Copies the given **style** to the given **target path** as 'stylename.css' and invokes **callback** when finished.
 
-- style: either its name (e.g., default) or one of the style objects returned from *getStyles()**.
+- style: either its name (e.g., default) or one of the style objects returned from **getStyles()**.
 - targetPath: *full* path to which to copy the 'stylename.css'
 - callback: invoked either with null or **Error** if an error occurred
 
