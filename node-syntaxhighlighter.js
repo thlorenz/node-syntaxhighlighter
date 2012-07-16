@@ -123,10 +123,29 @@ function copyStyle (style, tgt, cb) {
   util.pump(readStream, writeStream, cb);
 }
 
+
+function copyStyles(tgt, cb) {
+  var pending = styles.length;
+  styles.forEach(function (s) {
+    copyStyle(s, tgt, function (err) {
+      if (err) { 
+        cb(err);
+      } else {
+        if (--pending === 0) cb();
+      } 
+    });
+  });
+}
+
+copyStyles('./tmp', function (err) {
+  console.log('copied with error: ', err);  
+});
+
 module.exports = {
-    highlight      :  highlight
-  , getLanguage    :  getLanguage
-  , getStyles      :  getStyles
-  , copyStyle      :  copyStyle
+    highlight   :  highlight
+  , getLanguage :  getLanguage
+  , getStyles   :  getStyles
+  , copyStyle   :  copyStyle
+  , copyStyles  :  copyStyles
 };
 
