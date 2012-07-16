@@ -95,4 +95,3 @@ I will run this whenever a new version of SyntaxHighlighter becomes available an
 
 The currently synced version is documented inside [package.json](./node-syntaxhighlighter/blob/master/package.json) as the "version-sync".
 
-
