@@ -3,7 +3,6 @@
 var should = require('should')
   , nsh = require('../node-syntaxhighlighter')
   , proxyquire = require('proxyquire').setup()
-  , dirname = __dirname
   ;
 
 describe('language resolution', function () {
@@ -159,7 +158,7 @@ describe('copy style', function () {
             pump: function (read, write, cb) { pumped.read = read; pumped.write = write; cb(); }
         }
       })
-      .require('../node-syntaxhighlighter', dirname);
+      .require('../node-syntaxhighlighter');
   })
   
   describe('when I copy style { name: default, sourcePath: ' + sourcePath + ' to ' + targetPath, function () {
