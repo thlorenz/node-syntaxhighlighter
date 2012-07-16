@@ -80,6 +80,13 @@ Copies the given ***style*** to the given ***target path*** as 'stylename.css' a
 - targetPath: **full** path to which to copy the 'stylename.css'
 - callback: invoked either with null or ***Error*** if an error occurred
 
+## *copyStyles(targetPath, callback)*
+
+Copies all available styles to the given ***target path*** as 'stylename.css' and invokes ***callback*** when finished.
+
+- targetPath: **full** path to which to copy the styles
+- callback: invoked either with null or ***Error*** if an error occurred
+
 # Syncing with original SyntaxHighlighter
 
 node-syntaxhighlighter includes a synchronization script which allows staying up to date with the original SyntaxHighlighter.
