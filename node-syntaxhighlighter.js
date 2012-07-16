@@ -137,10 +137,6 @@ function copyStyles(tgt, cb) {
   });
 }
 
-copyStyles('./tmp', function (err) {
-  console.log('copied with error: ', err);  
-});
-
 module.exports = {
     highlight   :  highlight
   , getLanguage :  getLanguage
