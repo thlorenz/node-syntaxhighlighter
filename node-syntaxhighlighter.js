@@ -1,10 +1,11 @@
-var fs           =  require('fs')
-  , path         =  require('path')
-  , scriptsDir   =  path.join(__dirname, './lib/scripts')
-  , stylesDir    =  path.join(__dirname, './lib/styles')
+var fs         =  require('fs')
+  , path       =  require('path')
+  , util       =  require('util')
+  , scriptsDir =  path.join(__dirname, './lib/scripts')
+  , stylesDir  =  path.join(__dirname, './lib/styles')
   , styles
-  , langMap      =  { }
-  , similarMap   =  { }
+  , langMap    =  { }
+  , similarMap =  { }
   , similarLangs =  {
         'js'     :  [ 'json' ]
       , 'python' :  ['coffee', 'groovy', 'hs', 'haskell' ]
@@ -93,10 +94,39 @@ function getStyles () {
   return styles;
 }
 
-console.log(getStyles());
+function copyStyle (style, tgt, cb) {
+  var sourcePath
+    , styleName;
+
+  // Allow style to just be a string (its name) or a style returned from getStyles
+  if (typeof style === 'string') {
+    styleName = style;
+
+    var matchingStyle = styles.filter(function (s) { return s.name === style; })[0];
+
+    if (!matchingStyle) 
+      cb(new Error('Style named "' + style + '" not found.'));
+    else
+      sourcePath = matchingStyle.sourcePath;
+
+  } else if (!style.sourcePath) {
+    cb(new Error('style needs to be string or have "sourcePath" property'));
+  } else {
+    styleName = style.name;
+    sourcePath = style.sourcePath;
+  }
+
+  var readStream = fs.createReadStream(sourcePath)
+    , writeStream = fs.createWriteStream(path.join(tgt, styleName + '.css'))
+    ; 
+
+  util.pump(readStream, writeStream, cb);
+}
+
 module.exports = {
     highlight      :  highlight
   , getLanguage    :  getLanguage
   , getStyles      :  getStyles
+  , copyStyle      :  copyStyle
 };
 

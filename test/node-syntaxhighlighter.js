@@ -1,8 +1,9 @@
-/*jshint asi:true */
+/*jshint asi:true, esnext:true */
 
 var should = require('should')
-  , dirname = __dirname
   , nsh = require('../node-syntaxhighlighter')
+  , proxyquire = require('proxyquire').setup()
+  , dirname = __dirname
   ;
 
 describe('language resolution', function () {
@@ -130,5 +131,85 @@ describe('getStyles', function () {
     styles.filter(function (style) {
       return ! style.sourcePath.match(/(\/.+)+\w+\.css/);
     }).should.be.empty;
+  })
+})
+
+describe('copy style', function () {
+  var style
+    , readStream
+    , writeStream
+    , sourcePath = nsh.getStyles().filter(function (x) { return x.name === 'default'; })[0].sourcePath
+    , targetPath = '/target'
+    , pumpErr
+    , pumped
+    , proxnsh;
+
+  beforeEach(function () {
+    style = { name: 'default', sourcePath: sourcePath };
+    readStream = {};
+    writeStream = {};
+    pumped = {};
+
+    proxnsh = proxyquire({
+        fs: {
+            createReadStream: function (p) { readStream.path = p;  return readStream; }
+          , createWriteStream: function (p) { writeStream.path = p; return writeStream; }
+        }
+      , util: {
+            pump: function (read, write, cb) { pumped.read = read; pumped.write = write; cb(); }
+        }
+      })
+      .require('../node-syntaxhighlighter', dirname);
+  })
+  
+  describe('when I copy style { name: default, sourcePath: ' + sourcePath + ' to ' + targetPath, function () {
+
+    beforeEach(function (done) {
+      proxnsh.copyStyle( { name: 'default', sourcePath: sourcePath }, targetPath, function (err) {
+        pumpErr = err;
+        done();
+      });
+    })
+
+    it('copies ' + sourcePath + ' to ' + targetPath + '/default.css', function () {
+      pumped.read.should.eql({ path: sourcePath });
+      pumped.write.should.eql({ path: targetPath + '/default.css' });
+    })
+    it('returns no error', function () {
+      should.not.exist(pumpErr); 
+    })
+  })
+
+  describe('when I copy style "default" to ' + targetPath, function () {
+
+    beforeEach(function (done) {
+      proxnsh.copyStyle('default', targetPath, function (err) {
+        pumpErr = err;
+        done();
+      });
+    })
+
+    it('copies ' + sourcePath + ' to ' + targetPath + '/default.css', function () {
+      pumped.read.should.eql({ path: sourcePath });
+      pumped.write.should.eql({ path: targetPath + '/default.css' });
+    })
+    it('returns no error', function () {
+      should.not.exist(pumpErr); 
+    })
+  })
+
+  describe('when I copy style "unknown" to ' + targetPath, function () {
+
+    beforeEach(function (done) {
+      proxnsh.copyStyle('unknown', targetPath, function (err) {
+        pumpErr = err;
+        done();
+      });
+    })
+
+    it('returns an error indicating that the style was not found', function () {
+      should.exist(pumpErr); 
+      pumpErr.should.match(/"unknown" not found/);
+    })
   })
 })

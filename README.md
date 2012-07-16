@@ -64,6 +64,22 @@ Highlights given code with SyntaxHighlighter language using given options.
 
 For more information about options consult the [SyntaxHighlighter configuration page](http://alexgorbatchev.com/SyntaxHighlighter/manual/configuration/).
 
+## *getStyles()*
+
+Returns all available styles in the following format:
+
+```javascript
+{ name: 'stylename', sourcePath: '/path/to/style.css' }
+```
+
+## *copyStyle(style, targetPath, callback)*
+
+Copies the given **style** to the given **target path** as 'stylename.css' and invokes **callback** when finished.
+
+- style: either its name (e.g., default) or one of the style objects returned from *getStyles()**.
+- targetPath: *full* path to which to copy the 'stylename.css'
+- callback: invoked either with null or **Error** if an error occurred
+
 # Syncing with original SyntaxHighlighter
 
 node-syntaxhighlighter includes a synchronization script which allows staying up to date with the original SyntaxHighlighter.
