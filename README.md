@@ -4,11 +4,11 @@ Node friendly version of [Alex Gorbachev's great SyntaxHighlighter](http://alexg
 
 # Why
 
-The [current version of SyntaxHighlighter](https://github.com/alexgorbatchev/SyntaxHighlighter) does not work properly with nodejs.
+Using the [current version of SyntaxHighlighter](https://github.com/alexgorbatchev/SyntaxHighlighter) with nodejs is not straight forward not straight forward.
 
-Although it can be installed with npm by using the git repo url as package name, it doesn't work with nodejs right out of the box.
+Although it can be installed with npm by using the git repo url as package name, it is not obvious on how to use it with nodejs.
 
-**node-syntaxhighlighter** tries to fix that and expose a nodejs friendly api. 
+**node-syntaxhighlighter** tries to fix that and expose a nodejs friendly api to SyntaxHighlighter. 
 
 # Example
 
