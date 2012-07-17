@@ -8,7 +8,7 @@ The [current version of SyntaxHighlighter](https://github.com/alexgorbatchev/Syn
 
 Although it can be installed with npm by using the git repo url as package name, it doesn't work with nodejs right out of the box.
 
-node-syntaxhighlighter tries to fix that and expose a node friendly api. 
+**node-syntaxhighlighter** tries to fix that and expose a nodejs friendly api. 
 
 # Example
 
