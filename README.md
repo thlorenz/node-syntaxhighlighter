@@ -51,6 +51,19 @@ Outputs:
 
 More examples inside [examples folder](./node-syntaxhighlighter/tree/master/examples).
 
+## Try full page example 
+
+
+After installing the package run [pageofself](./node-syntaxhighlighter/blob/master/examples/pageofself.js) like so:
+
+```shell
+npm explore node-syntaxhighlighter
+cd examples
+node pageofself
+```
+    
+       
+
 # API
 
 ## *getLanguage(alias, strict = false)*
