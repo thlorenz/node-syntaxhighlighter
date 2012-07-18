@@ -108,6 +108,20 @@ describe('highlight', function () {
       returnedCode.should.eql(highlightedCode);
     })
   })
+
+  describe('highlight with invalid arguments', function () {
+    it('throws an error instructing to pass a language when I don\'t pass one', function () {
+      (function () {
+        nsh.highlight(code)
+      }).should.throw(/pass a language/);
+    })
+
+    it('throws an error instructing to pass a language with a Brush when I pass one without a Brush', function () {
+      (function () {
+        nsh.highlight(code, { })
+      }).should.throw(/pass a language with a Brush/);
+    })
+  })
 })
 
 describe('getStyles', function () {

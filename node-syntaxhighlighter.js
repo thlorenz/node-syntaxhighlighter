@@ -69,6 +69,9 @@ function highlight(code, language, options) {
       toolbar: false
     };
 
+  if (!language) throw new Error('You need to pass a language obtained via "getLanguage"');
+  if (!language.Brush) throw new Error('You need to pass a language with a Brush, obtained via "getLanguage"');
+
   if (options) {
     // Gather all user specified options first
     Object.keys(options).forEach(function (key) {

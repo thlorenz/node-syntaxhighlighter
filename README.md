@@ -61,8 +61,6 @@ npm explore node-syntaxhighlighter
 cd examples
 node pageofself
 ```
-    
-       
 
 # API
 
@@ -71,11 +69,17 @@ node pageofself
 Resolves SyntaxHighlighter language for given alias and tries to use similar languages if strict is false.
 Returns that language or undefined if not found.
 
+- alias: can be any alias known to SyntaxHighlighter or a file extension, e.g.,'javascript', 'js' or '.js'
+- strict: if false similar languages are returned if exact match isn't found
+
 ## *highlight(code, language[, options])*
 
 Highlights given code with SyntaxHighlighter language using given options.
 
 For more information about options consult the [SyntaxHighlighter configuration page](http://alexgorbatchev.com/SyntaxHighlighter/manual/configuration/).
+
+- code: the code to highlight
+- language: language object obtained via ***getLanguage***
 
 ## *getStyles()*
 
