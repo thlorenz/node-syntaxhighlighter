@@ -98,6 +98,7 @@ function nodify () {
   function copyAndAdaptScripts() {
     var scriptsSrc = path.join(repo, 'scripts')
       , scriptsTgt = path.join(lib, 'scripts')
+      , xregExpReq = 'var XRegExp = require("./XRegExp").XRegExp;\n'
       ;
 
     fs.mkdirSync(scriptsTgt);
@@ -114,10 +115,11 @@ function nodify () {
         content += '\nmodule.exports.XRegExp = XRegExp;';
       }
 
-      // fix shCore XRegExp require
+      // fix shCore XRegExp require, global leaks and SyntaxHighlighter reference 
       else if (script === 'shCore.js') {
         content = 
-          'var XRegExp = require("./XRegExp").XRegExp;\n' +
+          xregExpReq +
+          'var className,\n   gutter;\n' +
           content
             .replace(
               /if +\(typeof\(SyntaxHighlighter\) +== +'undefined'\) +var +SyntaxHighlighter += +function\(\) +\{/,
@@ -132,6 +134,9 @@ function nodify () {
         content = 
           'var SyntaxHighlighter;\n' +
           content.replace(/require *\( *['"]shCore['"] *\)/g, 'require("./shCore")');
+        
+        // fix shBrushXml XRegExp require
+        if (script == 'shBrushXml.js') content = xregExpReq + content;
       }
       
       fs.writeFileSync(path.join(scriptsTgt, script), content);

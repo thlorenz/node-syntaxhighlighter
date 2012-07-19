@@ -122,6 +122,16 @@ describe('highlight', function () {
       }).should.throw(/pass a language with a Brush/);
     })
   })
+
+  describe('highlight languages requiring XRegExp', function () {
+    it('highlights html', function () {
+      var lang = nsh.getLanguage('html')
+        , code = '<p>some sample html</p>';
+
+      nsh.highlight(code, lang).length.should.be.above(code.length);
+    })
+    
+  })
 })
 
 describe('getStyles', function () {
