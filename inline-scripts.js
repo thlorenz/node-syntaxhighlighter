@@ -1,28 +1,27 @@
 /*jshint laxbreak: true */
 
 var codePattern = /<td class="code".*?<\/td>/;
+  var allScriptTags = [
+    
+      // <script> ... </script>
+      { open: /<script[^>]*>/, close: /<\/script[^>]*>/, alias: 'js' }
 
-function findScripts(lines, getLanguage, specifiedAlias) {
+      // <? ... ?>
+    , { open: /^\s*<\?\s*$/, close: /^\s*\?>\s*$/,  alias: 'php' }
+
+      // <![CDATA[ ... ]]     -- (inline actionscript) only used for xhtml
+    , { open: /^\s*?<!\[CDATA\[\s*?$/, close: /^\s*?\]\]>\s*?$/, alias: 'as3', applyTo: 'xhtml' }
+  ];
+
+function findScripts(lines, specifiedAlias) {
   var scripts = []
     , inScript = false
     , currentScript
-    ;
-
-  var scriptTags = [
-    
-      // <script> ... </script>
-      { open: /<script[^>]*>/,  close: /<\/script[^>]*>/,  lang: getLanguage('js') }
-
-      // <? ... ?>
-    , { open: /^\s*<\?\s*$/,  close: /^\s*\?>\s*$/  ,  lang: getLanguage('php') }
-
-      // <![CDATA[ ... ]]     -- (inline actionscript) only used for xhtml
-    , { open: /^\s*?<!\[CDATA\[\s*?$/,  close: /^\s*?\]\]>\s*?$/, lang: getLanguage('as3'), applyTo: 'xhtml' }
-
-  ]
-  .filter(function (tag) {
-    return !tag.applyTo || tag.applyTo === specifiedAlias;
-  });
+    , scriptTags = allScriptTags
+        .filter(function (tag) {
+          // E.g., in case of ![CDATA make sure we only highlight if user specified xhtml
+          return !tag.applyTo || tag.applyTo === specifiedAlias;
+        });
 
   for (var lineNum  = 0; lineNum < lines.length; lineNum++) {
     var line = lines[lineNum];
@@ -33,7 +32,6 @@ function findScripts(lines, getLanguage, specifiedAlias) {
       for (var tagIndex = 0; tagIndex < scriptTags.length; tagIndex++) {
         var tag = scriptTags[tagIndex];
 
-        // In case of ![CDATA make sure we only highlight if user specified xhtml
         if (line.match(tag.open)) { 
           matchingTag = tag;
           break;

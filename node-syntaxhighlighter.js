@@ -102,12 +102,14 @@ function highlight(code, language, options) {
 
   if (language === langMap['html']) {
     var lines = code.split('\n')
-      , scripts = inline.findScripts(lines, getLanguage, language.specifiedAlias);
+      , scripts = inline.findScripts(lines, language.specifiedAlias);
 
     // Highlight code in between scripts tags and interject it into highlighted html
     scripts.forEach(function (script) {
-      var brush = new script.tag.lang.Brush()
-        , opts = mergedOpts;
+      var scriptLang = langMap[script.tag.alias]
+        , brush = new scriptLang.Brush()
+        , opts = mergedOpts
+        ;
 
       // adapt line numbers of highlighted code since it is in the middle of html document
       opts['first-line'] = mergedOpts['first-line'] + script.from;

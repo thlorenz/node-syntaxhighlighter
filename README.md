@@ -87,8 +87,7 @@ For more information about options consult the [SyntaxHighlighter configuration 
 
 - this option is ignored, since node-syntaxhighlighter will automatically find contained scripts inside html and xhtml documents
 - just highlight the page with ***'html'*** alias and code inside recognized script tags will be highlighted using the language specific highlighter
-- consult the [inline script examples](./node-syntaxhighlighter/tree/master/examples/inline-scripts)
-
+- for more information consult the [inline script examples](./node-syntaxhighlighter/tree/master/examples/inline-scripts) and the [inline script tests](./node-syntaxhighlighter/blob/master/test/inlinescripts.js)
 
 ## *getStyles()*
 
