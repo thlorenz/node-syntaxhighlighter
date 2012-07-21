@@ -1,6 +1,7 @@
 var fs         =  require('fs')
   , path       =  require('path')
   , util       =  require('util')
+  , inline     =  require('./inline-scripts')
   , scriptsDir =  path.join(__dirname, './lib/scripts')
   , stylesDir  =  path.join(__dirname, './lib/styles')
   , styles
@@ -59,15 +60,23 @@ function getLanguage(alias, strict) {
   // accept *.ext, .ext and ext
   var normalizedAlias = alias.replace(/^\*/,'').replace(/^\./,'');
 
-  return langMap[normalizedAlias] || (!strict ? similarMap[normalizedAlias] : void 0);
+  var match = langMap[normalizedAlias] || (!strict ? similarMap[normalizedAlias] : void 0);
+  
+  // Need to remember if user is highlighting html or xhtml for instance for use in highlight
+  if (match) match.specifiedAlias = normalizedAlias;
+
+  return match;
 }
 
 // options: http://alexgorbatchev.com/SyntaxHighlighter/manual/configuration/
 function highlight(code, language, options) {
   var mergedOpts = { }
     , defaults = {
-      toolbar: false
-    };
+          toolbar: false
+        , 'first-line': 1
+      }
+    , highlightedHtml
+    ;
 
   if (!language) throw new Error('You need to pass a language obtained via "getLanguage"');
   if (!language.Brush) throw new Error('You need to pass a language with a Brush, obtained via "getLanguage"');
@@ -87,11 +96,34 @@ function highlight(code, language, options) {
   }
 
   var brush = new language.Brush();
-
   brush.init(mergedOpts);
 
-  return brush.getHtml(code);
+  highlightedHtml = brush.getHtml(code);
+
+  if (language === langMap['html']) {
+    var lines = code.split('\n')
+      , scripts = inline.findScripts(lines, getLanguage, language.specifiedAlias);
+
+    // Highlight code in between scripts tags and interject it into highlighted html
+    scripts.forEach(function (script) {
+      var brush = new script.tag.lang.Brush()
+        , opts = mergedOpts;
+
+      // adapt line numbers of highlighted code since it is in the middle of html document
+      opts['first-line'] = mergedOpts['first-line'] + script.from;
+      
+      brush.init(opts);
+
+      var highlightedScript = brush.getHtml(script.code)
+        , higlightedLines = inline.extractLines(highlightedScript);
+
+      highlightedHtml = inline.replacePlainLines(script.from, script.to, highlightedHtml, higlightedLines);
+    });
+ } 
+
+  return highlightedHtml;
 }
+
 
 function getStyles () {
   return styles;
