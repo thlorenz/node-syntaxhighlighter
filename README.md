@@ -74,12 +74,21 @@ Returns that language or undefined if not found.
 
 ## *highlight(code, language[, options])*
 
-Highlights given code with SyntaxHighlighter language using given options.
+Highlights given code with SyntaxHighlighter language using given options with exceptions (see below).
 
 For more information about options consult the [SyntaxHighlighter configuration page](http://alexgorbatchev.com/SyntaxHighlighter/manual/configuration/).
 
 - code: the code to highlight
 - language: language object obtained via ***getLanguage***
+
+**Option Exceptions:**
+
+***'html-script'***: 
+
+- this option is ignored, since node-syntaxhighlighter will automatically find contained scripts inside html and xhtml documents
+- just highlight the page with ***'html'*** alias and code inside recognized script tags will be highlighted using the language specific highlighter
+- consult the [inline script examples](./node-syntaxhighlighter/tree/master/examples/inline-scripts)
+
 
 ## *getStyles()*
 
