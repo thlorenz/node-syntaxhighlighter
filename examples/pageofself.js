@@ -1,6 +1,6 @@
 // Creates html version of itself and wraps it inside html page tags and finally opens it in the browser
 
-var nsh      =  require('../../node-syntaxhighlighter')
+var nsh      =  require('../node-syntaxhighlighter')
   , fs       =  require('fs')
   , exec     =  require('child_process').exec
   , code     =  fs.readFileSync(__filename).toString()
