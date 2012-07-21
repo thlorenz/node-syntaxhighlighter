@@ -1,17 +1,17 @@
 /*jshint laxbreak: true */
 
-var codePattern = /<td class="code".*?<\/td>/;
-  var allScriptTags = [
-    
-      // <script> ... </script>
-      { open: /<script[^>]*>/, close: /<\/script[^>]*>/, alias: 'js' }
+var codePattern = /<td class="code".*?<\/td>/
+  , allScriptTags = [
+      
+        // <script> ... </script>
+        { open: /<script[^>]*>/, close: /<\/script[^>]*>/, alias: 'js' }
 
-      // <? ... ?>
-    , { open: /^\s*<\?\s*$/, close: /^\s*\?>\s*$/,  alias: 'php' }
+        // <? ... ?>
+      , { open: /^\s*<\?\s*$/, close: /^\s*\?>\s*$/,  alias: 'php' }
 
-      // <![CDATA[ ... ]]     -- (inline actionscript) only used for xhtml
-    , { open: /^\s*?<!\[CDATA\[\s*?$/, close: /^\s*?\]\]>\s*?$/, alias: 'as3', applyTo: 'xhtml' }
-  ];
+        // <![CDATA[ ... ]]     -- (inline actionscript) only used for xhtml
+      , { open: /^\s*?<!\[CDATA\[\s*?$/, close: /^\s*?\]\]>\s*?$/, alias: 'as3', applyTo: 'xhtml' }
+    ];
 
 function findScripts(lines, specifiedAlias) {
   var scripts = []
