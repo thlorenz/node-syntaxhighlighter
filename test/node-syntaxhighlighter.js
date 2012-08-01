@@ -2,7 +2,7 @@
 
 var should = require('should')
   , nsh = require('../node-syntaxhighlighter')
-  , proxyquire = require('proxyquire').setup()
+  , proxyquire = require('proxyquire')
   ;
 
 describe('language resolution', function () {
@@ -173,7 +173,7 @@ describe('copy style', function () {
     writeStream = {};
     pumped = {};
 
-    proxnsh = proxyquire({
+    proxnsh = proxyquire.resolve('../node-syntaxhighlighter', __dirname, {
         fs: {
             createReadStream: function (p) { readStream.path = p;  return readStream; }
           , createWriteStream: function (p) { writeStream.path = p; return writeStream; }
@@ -181,8 +181,7 @@ describe('copy style', function () {
       , util: {
             pump: function (read, write, cb) { pumped.read = read; pumped.write = write; cb(); }
         }
-      })
-      .require('../node-syntaxhighlighter');
+      });
   })
   
   describe('when I copy style { name: default, sourcePath: ' + sourcePath + ' to ' + targetPath, function () {
