@@ -1,6 +1,6 @@
 {
   "name": "node-syntaxhighlighter",
-  "author": "Thorsten Lorenz <thlorenz@gmx.de> (thorstenlorenz.wordpress.com)",
+  "author": "Thorsten Lorenz <thlorenz@gmx.de> (thlorenz.com)",
   "version-sync": "Synced with SyntaxHighlighter version: 3.0.83",
   "version": "0.8.1",
   "description": "Node friendly version of Alex Gorbachev's great SyntaxHighlighter.",
