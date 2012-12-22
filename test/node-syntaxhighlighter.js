@@ -173,7 +173,7 @@ describe('copy style', function () {
     writeStream = {};
     pumped = {};
 
-    proxnsh = proxyquire.resolve('../node-syntaxhighlighter', __dirname, {
+    proxnsh = proxyquire('../node-syntaxhighlighter', {
         fs: {
             createReadStream: function (p) { readStream.path = p;  return readStream; }
           , createWriteStream: function (p) { writeStream.path = p; return writeStream; }
