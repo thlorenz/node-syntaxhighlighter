@@ -20,9 +20,6 @@
   "licenses": [
     {
       "type": "MIT"
-    },
-    {
-      "type": "LGPL"
     }
   ],
   "devDependencies": {
